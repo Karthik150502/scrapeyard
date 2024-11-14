@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import AppProviders from "./providers";
+import AppProviders from "../providers";
 
 import { ClerkProvider } from "@clerk/nextjs";
-import { montserrat400 } from "./fonts/montserrat";
+import { montserrat400 } from "../fonts/montserrat";
 import { Toaster } from "@/components/ui/sonner";
 
 export const metadata: Metadata = {

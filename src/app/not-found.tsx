@@ -1,5 +1,5 @@
 import React from 'react'
-import { montserrat400 } from './fonts/montserrat'
+import { montserrat400 } from '../fonts/montserrat'
 import { cn } from '@/lib/utils'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'

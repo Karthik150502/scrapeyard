@@ -1,6 +1,6 @@
 
 import React from 'react'
-import { montserrat400 } from '../fonts/montserrat'
+import { montserrat400 } from '../../fonts/montserrat'
 import { cn } from '@/lib/utils'
 import DesktopSidebard from '@/components/ui/app/DesktopSidebard'
 import BreadcrumbHeader from '@/components/ui/app/BreadcrumbHeader'
@@ -16,15 +16,15 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <DesktopSidebard />
             <div className='flex flex-col flex-1 min-h-screen'>
                 <header className='flex items-center justify-between px-6 py-4 h-[50px] container'>
-                    <BreadcrumbHeader /> 
+                    <BreadcrumbHeader />
                     <div className='flex items-center gap-1 '>
-                        <ModeToggle/>
+                        <ModeToggle />
                         <SignedIn>
                             <UserButton></UserButton>
                         </SignedIn>
                     </div>
                 </header>
-                <SelectSeparator/>
+                <SelectSeparator />
                 <div className='overflow-auto'>
                     <div className="flex-1 container py- text-accent-foreground">
                         {children}
