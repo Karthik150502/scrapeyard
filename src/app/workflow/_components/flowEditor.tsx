@@ -114,6 +114,10 @@ export default function FlowEditor({ workflow }: { workflow: Workflow }) {
         const outputFrom = sourceTask.outputs.find((o: any) => o.name === object.sourceHandle);
         const inputTo = targetTask.inputs.find((o: any) => o.name === object.targetHandle);
 
+        if (!outputFrom || !inputTo) {
+            return false;
+        }
+
         if (outputFrom.type !== inputTo.type) {
             return false;
         }
