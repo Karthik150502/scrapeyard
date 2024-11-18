@@ -19,7 +19,7 @@ export default function ExecuteButton({ workflowId }: { workflowId: string }) {
             console.log("-----plan------");
             console.table(plan)
             console.log("-----plan------");
-        } catch (e) {
+        } catch (e: any) {
             console.log("Some error occured.")
             toast.error(e.message)
         } finally {
