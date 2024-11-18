@@ -15,7 +15,7 @@ export default function Notfound() {
                     Oops...Page not found.....
                 </h3>
                 <p className='text-muted-foreground mb-4 max-w-d'>
-                    Dont worry, it's easy to get lost where there is so much to explore.
+                    Dont worry, it&apos;s easy to get lost where there is so much to explore.
                 </p>
                 <div className='flex flex-col sm:flex-row justify-center gap-4'>
                     <Link href={"/"} className='flex items-center justify-center px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/80 transition-colors'>
