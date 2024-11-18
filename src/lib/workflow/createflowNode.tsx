@@ -1,6 +1,6 @@
-import { AppNode } from '@/types/appNodes'
+import { AppNode } from '@/types/appNode'
 import { TaskType } from '@/types/task'
-import React from 'react'
+
 
 
 

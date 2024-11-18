@@ -1,12 +1,12 @@
 'use client'
 import { TaskParam, TaskParamType } from '@/types/task'
-import { Input } from '@/components/ui/input'
 import React, { useCallback } from 'react'
 import StringParam from './params/stringParam'
 import { useReactFlow } from '@xyflow/react'
-import { AppNode } from '@/types/appNodes'
+import { AppNode } from '@/types/appNode'
+import BrowserInstanceParam from './params/browserInstanceParam'
 
-export default function NodeParamField({ param, nodeId }: { nodeId: string, param: TaskParam }) {
+export default function NodeParamField({ param, nodeId, disabled }: { nodeId: string, param: TaskParam, disabled: boolean }) {
 
     const { updateNodeData, getNode } = useReactFlow();
 
@@ -24,11 +24,19 @@ export default function NodeParamField({ param, nodeId }: { nodeId: string, para
 
     switch (param.type) {
         case TaskParamType.STRING: {
-            return <StringParam param={param} value={value} updateNodeParamValue={updateNodeParamValue} />
+            return <StringParam
+                param={param}
+                value={value}
+                updateNodeParamValue={updateNodeParamValue}
+                disabled={disabled}
+            />
+        }
+        case TaskParamType.BROWSER_INSTANCE: {
+            return <BrowserInstanceParam param={param} value={""} updateNodeParamValue={updateNodeParamValue} />
         }
         default: {
             return <div className="w-full">
-                <p className='text=xs text-muted-foreground'>Not implemented</p>
+                <p className='text-xs text-muted-foreground'>Not implemented</p>
             </div>
         }
     }

@@ -3,11 +3,11 @@
 
 import { dashboardRoutes } from '@/lib/config'
 import React from 'react'
-import BrandLogo from '../logo'
-import Link from 'next/link'
-import { cn } from '@/lib/utils'
-import { buttonVariants } from '../button'
-import { usePathname } from 'next/navigation'
+import BrandLogo from '../logo';
+import Link from 'next/link';
+import { cn } from '@/lib/utils';
+import { buttonVariants } from '../button';
+import { usePathname } from 'next/navigation';
 export default function DesktopSidebard() {
 
     const pathName = usePathname();
@@ -21,10 +21,10 @@ export default function DesktopSidebard() {
             <div className='p-2'>TODO</div>
             <div className='flex flex-col p-2 gap-y-2'>
                 {
-                    dashboardRoutes.map((r) => <Link href={r.path} key={r.path} className={cn("flex items-center justify-start gap-x-2", buttonVariants({ variant: activeRoute.path == r.path ? "sidebarActiveItem" : "sidebarItem" }))}
+                    dashboardRoutes.map((r) => <Link href={r.path} key={r.path} className={cn("flex items-center justify-start gap-x-2 !rounded-md", buttonVariants({ variant: activeRoute.path == r.path ? "sidebarActiveItem" : "sidebarItem" }))}
 
                     >
-                        <r.icon size={18} strokeWidth={1.5} />
+                        <r.icon size={18} strokeWidth={1} />
                         {r.label}
                     </Link>)
                 }

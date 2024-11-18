@@ -4,6 +4,7 @@ import { Alert, AlertDescription, AlertTitle } from '../alert';
 import { AlertCircle, InboxIcon } from 'lucide-react';
 import CreateWorkFlowDialog from '@/app/(dashboard)/workflows/_components/CreateWorkFlowDialog';
 import WorkflowCard from '@/app/(dashboard)/workflows/_components/WorkflowCard';
+import WorkflowCard2 from '@/app/(dashboard)/workflows/_components/WorkflowCard2';
 
 export default async function UserWorkFlows() {
 
@@ -39,10 +40,10 @@ export default async function UserWorkFlows() {
 
 
 
-    return <div className='grid grid-cols-1 gap-4'>
+    return <div className='grid grid-cols-2 gap-4'>
         {
             workflows.map(w => {
-                return <WorkflowCard workflow={w} key={w.id} />
+                return <WorkflowCard2 workflow={w} key={w.id} />
             })
         }
     </div>

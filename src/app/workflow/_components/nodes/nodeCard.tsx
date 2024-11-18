@@ -23,7 +23,7 @@ export default function NodeCard({ nodeId, isSelected, children }: { nodeId: str
                     duration: 500
                 })
             }}
-            className={cn('rounded-[5px] cursor-pointer bg-background border w-[420px] text-xs gap-1 felx flex-col', isSelected && 'border-primary')}>
+            className={cn('rounded-[5px] cursor-pointer bg-background border w-[420px] text-xs gap-1 flex flex-col', isSelected && 'border-primary')}>
             {children}
         </div>
     )

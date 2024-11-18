@@ -10,10 +10,10 @@ import {
 type Props = {
     content: string,
     children: React.ReactNode,
-    side: "top" | "bottom" | "left" | "right"
+    side?: "top" | "bottom" | "left" | "right"
 }
 
-export default function TooltipWrapper({ content, children, side }: Props) {
+export default function TooltipWrapper({ content, children, side = "top" }: Props) {
     return (
         <TooltipProvider delayDuration={0}>
             <Tooltip>

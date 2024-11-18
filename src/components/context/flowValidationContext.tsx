@@ -1,0 +1,3 @@
+type FlowValidationContextType = {
+    invalidInputs: AppNodeMissingInputs[]
+}
