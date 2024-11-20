@@ -1,11 +1,22 @@
-import { AppNode } from "@/types/appNode";
+import { AppNode, AppNodeMissingInputs } from "@/types/appNode";
 import { WorkflowExecutionPlanPhaseType, WorkflowExecutionPlanType } from "@/types/workflow";
-import { Edge, getIncomers } from "@xyflow/react";
+import { Edge    } from "@xyflow/react";
 import { TaskRegistry } from "./task/registry";
 
 
+export enum FlowToExecutionValidationError {
+    NO_ENTRY_POINT = "NO_ENTRY_POINT",
+    INVALID_INPUTS = "INVALID_INPUTS"
+}
+
+export type FlowToExecutionErrorType = {
+    type: FlowToExecutionValidationError,
+    invalidElements?: AppNodeMissingInputs[]
+}
+
 type FlowToExecutionPlanType = {
-    executionPlan?: WorkflowExecutionPlanType
+    executionPlan?: WorkflowExecutionPlanType,
+    error?: FlowToExecutionErrorType
 }
 
 export function flowToExecutionPlan(nodes: AppNode[], edges: Edge[]): FlowToExecutionPlanType {
@@ -14,11 +25,22 @@ export function flowToExecutionPlan(nodes: AppNode[], edges: Edge[]): FlowToExec
 
 
     if (!entryPoint) {
-        throw new Error("Entry point not found.")
+        return {
+            error: {
+                type: FlowToExecutionValidationError.NO_ENTRY_POINT,
+            }
+        }
     }
 
-
+    const inputWithErrors: AppNodeMissingInputs[] = [];
     let plannedNodes = new Set<string>([entryPoint.id]);
+    const invalidInputs = getInvalidInputs(entryPoint, edges, plannedNodes);
+    if (invalidInputs.length > 0) {
+        inputWithErrors.push({
+            nodeId: entryPoint.id,
+            inputs: invalidInputs
+        })
+    }
     const executionPlan: WorkflowExecutionPlanType = [
         {
             phase: 1,
@@ -42,15 +64,20 @@ export function flowToExecutionPlan(nodes: AppNode[], edges: Edge[]): FlowToExec
                 continue;
             }
 
-            const inValidInputs = getInvalidInputs(currentNode, edges, plannedNodes);
+            const invalidInputs = getInvalidInputs(currentNode, edges, plannedNodes);
 
-            if (inValidInputs.length > 0) {
+            if (invalidInputs.length > 0) {
                 // Getting the incoming nodes to the currentNode
                 const incomers = getIncomers(currentNode, nodes, edges);
                 if (incomers.every(incomer => plannedNodes.has(incomer.id))) {
                     // If all incomers/edges are planned, and there is an invalid input, that means we have an invalid workflow.
-                    console.log("Invalid inputs = ", currentNode.id, inValidInputs);
-                    throw new Error("Invalid input found.");
+                    console.log("Invalid inputs = ", currentNode.id, invalidInputs);
+                    if (invalidInputs.length > 0) {
+                        inputWithErrors.push({
+                            nodeId: currentNode.id,
+                            inputs: invalidInputs
+                        })
+                    }
                 } else {
                     continue;
                 }
@@ -61,6 +88,15 @@ export function flowToExecutionPlan(nodes: AppNode[], edges: Edge[]): FlowToExec
             plannedNodes.add(node.id);
         }
         executionPlan.push(nextPhase);
+    }
+
+    if (inputWithErrors.length > 0) {
+        return {
+            error: {
+                type: FlowToExecutionValidationError.INVALID_INPUTS,
+                invalidElements: inputWithErrors
+            }
+        }
     }
 
     return {
@@ -111,4 +147,18 @@ function getInvalidInputs(node: AppNode, edges: Edge[], planned: Set<string>) {
     }
 
     return invalidInputs;
+}
+
+
+function getIncomers(node: AppNode, nodes: AppNode[], edges: Edge[]) {
+    if (!node) {
+        return []
+    }
+    const incomersIds = new Set();
+    edges.forEach((e) => {
+        if (e.target === node.id) {
+            incomersIds.add(e.source);
+        }
+    })
+    return nodes.filter(n => incomersIds.has(n.id));
 }

@@ -11,10 +11,11 @@ import ExecuteButton from './ExecuteButton'
 type Props = {
     title: string,
     subtitle?: string,
-    workflowId: string
+    workflowId: string,
+    hideButtons?: boolean
 }
 
-export default function Topbar({ title, subtitle, workflowId }: Props) {
+export default function Topbar({ title, subtitle, workflowId, hideButtons = false }: Props) {
 
     const router = useRouter();
 
@@ -41,8 +42,12 @@ export default function Topbar({ title, subtitle, workflowId }: Props) {
             </div>
 
             <div className='flex gap-1 flex-1 justify-end items-center'>
-                <ExecuteButton workflowId={workflowId}/>
-                <SaveButton workflowId={workflowId} />
+                {!hideButtons &&
+                    <>
+                        <ExecuteButton workflowId={workflowId} />
+                        <SaveButton workflowId={workflowId} />
+                    </>
+                }
             </div>
         </header>
     )

@@ -40,7 +40,7 @@ export default async function UserWorkFlows() {
 
 
 
-    return <div className='grid grid-cols-2 gap-4'>
+    return <div className='grid lg:grid-cols-2 grid-cols-1 gap-4'>
         {
             workflows.map(w => {
                 return <WorkflowCard2 workflow={w} key={w.id} />
