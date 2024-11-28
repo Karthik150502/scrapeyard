@@ -8,6 +8,7 @@ import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { buttonVariants } from '../button';
 import { usePathname } from 'next/navigation';
+import UserAvailableCredits from './userAvailableCredits';
 export default function DesktopSidebard() {
 
     const pathName = usePathname();
@@ -18,9 +19,9 @@ export default function DesktopSidebard() {
             <div className='flex items-center justify-center gap-2 border-b-[1px] border-separate p-4'>
                 <BrandLogo />
             </div>
-            <div className='p-2'>TODO</div>
+            <div className='p-2'><UserAvailableCredits /></div>
             <div className='flex flex-col p-2 gap-y-2'>
-                {
+                {   
                     dashboardRoutes.map((r) => <Link href={r.path} key={r.path} className={cn("flex items-center justify-start gap-x-2 !rounded-md", buttonVariants({ variant: activeRoute.path == r.path ? "sidebarActiveItem" : "sidebarItem" }))}
 
                     >

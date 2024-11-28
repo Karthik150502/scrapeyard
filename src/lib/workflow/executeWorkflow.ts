@@ -8,6 +8,11 @@ import { AppNode } from "@/types/appNode";
 import { TaskRegistry } from "./task/registry";
 import { ExecutorRegistry } from "./executor/registry";
 import { Environment, ExecutionEnvironment } from "@/types/executor";
+import { TaskParamType } from "@/types/task";
+import { Browser, Page } from "puppeteer";
+import { Edge } from "@xyflow/react";
+import { LogCollector } from "@/types/log";
+import { createLogCollector } from "../log";
 
 export async function executeWorkflow(executionId: string) {
     const execution = await prisma.workFlowExecution.findUnique({
@@ -23,11 +28,11 @@ export async function executeWorkflow(executionId: string) {
         throw new Error("Execution not found");
     }
 
+    const edges = JSON.parse(execution.definition).edges as Edge[]
+
     // TODO: Setup execution
     const environment: Environment = {
-        phases: {
-
-        }
+        phases: {}
     };
 
 
@@ -37,13 +42,15 @@ export async function executeWorkflow(executionId: string) {
     // TODO: Initialize the phases status
     await intializePhaseStatuses(execution);
 
+
+
     let executionFailed = false;
     let creditsConsumed = 0;
     for (const phase of execution.phases) {
-        await waitFor(3);
-        // TODO: Consume credits
+
         // TODO: Execute each phase.
-        const phaseExecution = await executeWorkflowPhase(phase, environment);
+        const phaseExecution = await executeWorkflowPhase(phase, environment, edges, execution.userId);
+        creditsConsumed += phaseExecution.creditsConsumed;
         if (!phaseExecution.success) {
             executionFailed = true;
             break;
@@ -58,6 +65,7 @@ export async function executeWorkflow(executionId: string) {
         creditsConsumed);
 
     // TODO: To clean up the environment.
+    await cleanUpEnvironment(environment);
     revalidatePath("/workflow/run")
 
 }
@@ -70,7 +78,7 @@ async function initializeWorkflowExecution(executionId: string, workflowId: stri
         },
         data: {
             startedAt: new Date(),
-            status: WorkflowExecutionStatus.RUNNNING,
+            status: WorkflowExecutionStatus.RUNNING,
         }
     })
 
@@ -80,7 +88,7 @@ async function initializeWorkflowExecution(executionId: string, workflowId: stri
         },
         data: {
             lastRunAt: new Date(),
-            lastRunStatus: WorkflowExecutionStatus.RUNNNING,
+            lastRunStatus: WorkflowExecutionStatus.RUNNING,
             lastRunId: executionId
         }
     })
@@ -124,16 +132,17 @@ async function finalizeWorkflowExecution(executionId: string, workflowId: string
         }
     }).catch(err => {
         // Ignore 
-        // This means we have triggered other runs while an execution wa running.
+        // This means we have triggered other runs while an execution was running.
     });
 }
 
 
-async function executeWorkflowPhase(phase: ExecutionPhase, environment: Environment) {
+async function executeWorkflowPhase(phase: ExecutionPhase, environment: Environment, edges: Edge[], userId: string) {
+    const logCollector = createLogCollector()
     const startedAt = new Date();
     const node = JSON.parse(phase.node) as AppNode;
 
-    setupEnvironmentForPhase(node, environment)
+    setupEnvironmentForPhase(node, environment, edges)
 
 
     // Updating the phase status
@@ -142,8 +151,9 @@ async function executeWorkflowPhase(phase: ExecutionPhase, environment: Environm
             id: phase.id
         },
         data: {
-            status: WorkflowExecutionStatus.RUNNNING,
+            status: ExecutionPhaseStatus.RUNNING,
             startedAt,
+            inputs: JSON.stringify(environment.phases[node.id].inputs)
         }
     })
 
@@ -155,19 +165,34 @@ async function executeWorkflowPhase(phase: ExecutionPhase, environment: Environm
     // const success = Math.random() < 0.9;
 
 
-    const success = await executePhase(phase, node, environment);
-
     // TODO: Decrement the credits from the user balance.
+    let success = await decrementCredits(userId, creditsRequired, logCollector);
+    let creditsConsumed = success ? creditsRequired : 0;
+    if (success) {
+        // We can execute the phase if the credits are sufficient.
+        success = await executePhase(phase, node, environment, logCollector);
+    }
 
 
-    await finalizePhase(phase.id, success);
+
+
+    const outputs = environment.phases[node.id].outputs;
+    await finalizePhase(phase.id, success, outputs, logCollector, creditsConsumed);
     return {
         success,
+        creditsConsumed
     }
 }
 
 
-export async function finalizePhase(phaseid: string, success: boolean) {
+export async function finalizePhase(
+    phaseid: string,
+    success: boolean,
+    outputs: any,
+    logCollector: LogCollector,
+    creditsConsumed: number
+) {
+
     const finalStatus = success ? ExecutionPhaseStatus.COMPLETED : ExecutionPhaseStatus.FAILED;
     await prisma.executionPhase.update({
         where: {
@@ -175,28 +200,40 @@ export async function finalizePhase(phaseid: string, success: boolean) {
         },
         data: {
             status: finalStatus,
-            completedAt: new Date()
+            completedAt: new Date(),
+            outputs: JSON.stringify(outputs),
+            creditsConsumed,
+            executionLogs: {
+                createMany: {
+                    data: logCollector.getAll().map(log => ({
+                        message: log.message,
+                        timeStamp: log.timeStamp,
+                        logLevel: log.level
+                    }))
+                }
+            }
         }
     })
 }
 
 
-async function executePhase(phase: ExecutionPhase, node: AppNode, environment: Environment): Promise<boolean> {
+async function executePhase(phase: ExecutionPhase, node: AppNode, environment: Environment, logCollector: LogCollector): Promise<boolean> {
 
     const runFn = ExecutorRegistry[node.data.type];
     if (!runFn) {
         return false;
     }
 
-    const executionEnvironment: ExecutionEnvironment = createExecutionEnvironment(node, environment);
+    const executionEnvironment: ExecutionEnvironment<any> = createExecutionEnvironment(node, environment, logCollector);
     return await runFn(executionEnvironment);
 }
 
-function setupEnvironmentForPhase(node: AppNode, environment: Environment) {
+function setupEnvironmentForPhase(node: AppNode, environment: Environment, edges: Edge[]) {
     environment.phases[node.id] = { inputs: {}, outputs: {} };
     const inputs = TaskRegistry[node.data.type].inputs;
 
     for (const input of inputs) {
+        if (input.type === TaskParamType.BROWSER_INSTANCE) { continue; }
         const inputValue = node.data.inputs[input.name];
         if (inputValue) {
             environment.phases[node.id].inputs[input.name] = inputValue;
@@ -204,13 +241,62 @@ function setupEnvironmentForPhase(node: AppNode, environment: Environment) {
         }
 
         // Get input value from the outputs in the environment.
+        const connectedEdge = edges.find(e => e.target === node.id && e.targetHandle === input.name);
+        if (!connectedEdge) {
+            console.error(`Missing edge for the input: ${input.name}, node id: ${node.id}`);
+            continue;
+        }
 
+        const outputValue = environment.phases[connectedEdge.source].outputs[connectedEdge.sourceHandle!]
+
+        environment.phases[node.id].inputs[input.name] = outputValue;
     }
 }
 
 
-function createExecutionEnvironment(node: AppNode, environment: Environment) {
+function createExecutionEnvironment(node: AppNode, environment: Environment, logCollector: LogCollector): ExecutionEnvironment<any> {
     return {
         getInput: (name: string) => environment.phases[node.id]?.inputs[name],
+        setOutput: (name: string, value: string) => {
+            environment.phases[node.id].outputs[name] = value;
+        },
+        getBrowser: () => environment.browser,
+        setBrowser: (browser: Browser) => (environment.browser = browser),
+        setPage: (page: Page) => (environment.page = page),
+        getPage: () => environment.page,
+        log: logCollector
+    }
+}
+
+
+async function cleanUpEnvironment(env: Environment) {
+    if (env.browser) {
+        await env.browser
+            .close()
+            .catch(err => {
+                console.error("Cannot close the browser, reason: " + err);
+            });
+    }
+}
+
+
+async function decrementCredits(
+    userId: string,
+    amount: number,
+    logCollector: LogCollector
+) {
+    try {
+        await prisma.userBalance.update({
+            where: {
+                userId: userId, credits: { gte: amount }
+            },
+            data: {
+                credits: { decrement: amount }
+            }
+        })
+        return true;
+    } catch {
+        logCollector.error("Insufficient balance.");
+        return false;
     }
 }

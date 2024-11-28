@@ -8,6 +8,7 @@ import { MenuIcon } from 'lucide-react';
 import Link from 'next/link';
 import BrandLogo from '../logo';
 import { cn } from '@/lib/utils';
+import UserAvailableCredits from './userAvailableCredits';
 
 export default function MobileSidebar() {
 
@@ -27,6 +28,7 @@ export default function MobileSidebar() {
 
                     <SheetContent className='w-[400px] sm:w-[500px] space-y-4' side={"left"}>
                         <BrandLogo />
+                        <UserAvailableCredits />
                         <div className='flex flex-col gap-y-2 w-full'>
                             {
                                 dashboardRoutes.map((r) => <Link href={r.path} key={r.path} className={cn("flex items-center justify-start gap-x-2", buttonVariants({ variant: activeRoute.path == r.path ? "sidebarActiveItem" : "sidebarItem" }))}

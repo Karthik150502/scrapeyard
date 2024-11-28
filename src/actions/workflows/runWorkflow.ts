@@ -57,6 +57,7 @@ export async function runWorkFlow(form: {
             status: WorkflowExecutionStatus.PENDING,
             startedAt: new Date(),
             trigger: WorkflowExecutionTrigger.MANUAL,
+            definition: flowDefinition,
             phases: {
                 create: executionPlan.flatMap(phase => {
                     return phase.nodes.flatMap(node => {
