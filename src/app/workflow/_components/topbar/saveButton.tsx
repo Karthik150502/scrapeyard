@@ -14,10 +14,10 @@ export default function SaveButton({ workflowId }: { workflowId: string }) {
     const saveMutation = useMutation({
         mutationFn: UpdateWorkFlow,
         onSuccess: () => {
-            toast.success("Saved the workflow.", { id: "save-workflow" })
+            toast.success("Saved the workflow.", { id: workflowId })
         },
         onError: () => {
-            toast.success("Error saving the workflow.", { id: "save-workflow" })
+            toast.error("Error saving the workflow.", { id: workflowId })
         }
     })
 
@@ -27,8 +27,8 @@ export default function SaveButton({ workflowId }: { workflowId: string }) {
             variant={"outline"}
             className='flex items-center gap-2'
             onClick={() => {
+                toast.loading("Saving workflow...", { id: workflowId })
                 const workFlowDefinition = JSON.stringify(toObject());
-                toast.loading("Saving workflow", { id: "save-workflow" })
                 saveMutation.mutate({
                     id: workflowId,
                     definition: workFlowDefinition

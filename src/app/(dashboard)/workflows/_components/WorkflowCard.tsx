@@ -8,6 +8,7 @@ import { cn } from '@/lib/utils'
 import Link from 'next/link'
 import { buttonVariants } from '@/components/ui/button'
 import WorkFlowActions from './WorkFlowActions'
+import RunButton from '@/app/workflow/_components/runButton'
 
 
 
@@ -40,6 +41,7 @@ export default function WorkflowCard({ workflow }: Props) {
                     </div>
 
                     <div className='flex flex-col items-start justify-center gap-y-1'>
+
                         <Link className='flex items-center hover:underline' href={`/workflow/editor/${workflow.id}`}>{workflow.name}{
                             isDraft && (<span className='ml-2 py-0.5 text-xs font-medium bg-yellow-100 text-black px-2 rounded-full'>
                                 Draft
@@ -48,6 +50,7 @@ export default function WorkflowCard({ workflow }: Props) {
                     </div>
                 </div>
                 <div className="flex items-center space-x-2">
+
                     <Link
                         className={cn(buttonVariants({ variant: "outline", size: "sm" }), "flex items-center gap-2")}
                         href={`/workflow/editor/${workflow.id}`}><ShuffleIcon /> Edit</Link>

@@ -194,6 +194,7 @@ export async function finalizePhase(
 ) {
 
     const finalStatus = success ? ExecutionPhaseStatus.COMPLETED : ExecutionPhaseStatus.FAILED;
+    console.log("============================", finalStatus)
     await prisma.executionPhase.update({
         where: {
             id: phaseid

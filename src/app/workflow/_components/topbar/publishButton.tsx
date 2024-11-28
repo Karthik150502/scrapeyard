@@ -1,23 +1,23 @@
 'use client'
 import React from 'react'
 import { Button } from '@/components/ui/button';
-import { Play, Pause } from 'lucide-react';
+import { UploadIcon, Loader } from 'lucide-react';
 import useExecutionPlan from '@/hooks/use-execution-plan';
 import { toast } from 'sonner';
 import { useMutation } from '@tanstack/react-query';
-import { runWorkFlow } from '@/actions/workflows/runWorkflow';
+import { publishWorkflow } from '@/actions/workflows/publishWorkflow';
 import { useReactFlow } from '@xyflow/react';
 
-export default function ExecuteButton({ workflowId }: { workflowId: string }) {
+export default function PublishButton({ workflowId }: { workflowId: string }) {
 
     const generate = useExecutionPlan();
     const { toObject } = useReactFlow();
 
 
     const { mutate, isPending } = useMutation({
-        mutationFn: runWorkFlow,
+        mutationFn: publishWorkflow,
         onSuccess: () => {
-            toast.success("Execution started.", { id: workflowId })
+            toast.success("Published workflow.", { id: workflowId })
         },
         onError: () => {
             toast.error("Something went wrong.", { id: workflowId })
@@ -25,11 +25,13 @@ export default function ExecuteButton({ workflowId }: { workflowId: string }) {
     })
 
     const handleExecution = () => {
+        toast.loading("Publishing workflow...", { id: workflowId })
         let plan = generate();
         if (!plan) {
+            toast.dismiss(workflowId);
             return;
         }
-        mutate({ workflowId, flowDefinition: JSON.stringify(toObject()) });
+        mutate({ id: workflowId, flowDefinition: JSON.stringify(toObject()) });
     }
 
     return (
@@ -41,10 +43,10 @@ export default function ExecuteButton({ workflowId }: { workflowId: string }) {
                 handleExecution();
             }}>
             {
-                isPending ? <Pause strokeWidth={1.5} size={16} className='stroke-red-500' /> : <Play strokeWidth={1.5} size={16} className='stroke-green-700' />
+                isPending ? <Loader strokeWidth={1.5} size={16} className='stroke-slate-500 animate-spin' /> : <UploadIcon strokeWidth={1.5} size={16} className='stroke-primary' />
             }
 
-            {isPending ? "Executing" : "Execute"}
+            {isPending ? "Publishing" : "Publish"}
         </Button>
     )
 }

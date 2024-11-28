@@ -14,13 +14,16 @@ datasource db {
 }
 
 model Workflow {
-  id          String  @id @default(cuid())
-  userId      String
-  name        String
-  description String?
-  definition  String
-  status      String
-
+  id                String              @id @default(cuid())
+  userId            String
+  name              String
+  description       String?
+  definition        String
+  executionPlan     String?
+  creditsCost       Int                 @default(0)
+  status            String
+  cron              String?
+  nextRunAt         DateTime?
   lastRunAt         DateTime?
   lastRunId         String?
   lastRunStatus     String?
@@ -76,8 +79,7 @@ model ExecutionLog {
   executionPhase  ExecutionPhase @relation(fields: [executioPhaseId], references: [id], onDelete: Cascade)
 }
 
-
-model UserBalance{
-  userId String @id
-  credits Int @default(0)
+model UserBalance {
+  userId  String @id
+  credits Int    @default(0)
 }

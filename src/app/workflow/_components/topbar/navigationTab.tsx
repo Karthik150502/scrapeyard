@@ -5,15 +5,22 @@ import {
   Tabs, TabsList, TabsTrigger
 } from "@/components/ui/tabs"
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 export default function NavigationTab({ workflowId }: { workflowId: string }) {
+  const pathName = usePathname();
+  const activeValue = pathName.split("/")[2]
   return (
-    <Tabs className='w-[400px]'>
+    <Tabs value={activeValue} className='w-[400px]'>
       <TabsList className='grid w-full grid-cols-2'>
         <Link href={`/workflow/editor/${workflowId}/`}>
-          Editor
+          <TabsTrigger value='editor' className='w-full'>
+            Editor
+          </TabsTrigger>
         </Link>
         <Link href={`/workflow/run/${workflowId}`}>
-          Runs
+          <TabsTrigger value='run' className='w-full'>
+            Runs
+          </TabsTrigger>
         </Link>
       </TabsList>
     </Tabs>

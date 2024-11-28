@@ -36,6 +36,7 @@ import { cn } from '@/lib/utils';
 import { LogLevel } from '@/types/log';
 import PhaseStatusBadge from './phaseStatusBadge';
 import CountUpWrapper from '@/components/ui/app/countUpWrapper';
+import WorkflowStatusBadge from './workflowStatusBadge';
 
 type ExecutionData = Awaited<Return<typeof getWorkflowExecutionWithPhases>>;
 
@@ -85,7 +86,10 @@ export default function ExecutionViewer({ initialData }: { initialData: Executio
                 <div className='py-4 px-2'>
                     <ExecutionLabel
                         label={'Status'}
-                        value={query.data?.status}
+                        value={<div className='flex items-center gap-2 capitalize'>
+                            <WorkflowStatusBadge status={query.data?.status as WorkflowExecutionStatus} />
+                            <span>{query.data?.status}</span>
+                        </div>}
                         icon={CircleDashedIcon}
                     />
                     <ExecutionLabel

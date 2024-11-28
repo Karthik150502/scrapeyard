@@ -14,7 +14,11 @@ import {
 } from "@/components/ui/table"
 import { datesToDurationString } from '@/lib/helper/dates';
 import { Badge } from '@/components/ui/badge';
-
+import ExecutionStatusIndicator from './executionStatusIndicator';
+import { WorkflowExecutionStatus } from '@/types/workflow';
+import { CoinsIcon } from 'lucide-react';
+import { formatDistanceToNow } from 'date-fns';
+import { useRouter } from 'next/navigation';
 type InitialDataType = Awaited<ReturnType<typeof getWorkflowExecution>>;
 
 
@@ -26,6 +30,7 @@ export default function ExecutionsTable({
     workflowId: string
 }) {
 
+    const router = useRouter();
     const query = useQuery({
         queryKey: ['executions', workflowId],
         initialData,
@@ -49,7 +54,14 @@ export default function ExecutionsTable({
                     {
                         query.data.map((exec, index) => {
                             const duration = datesToDurationString(exec.completedAt, exec.startedAt)
-                            return <TableRow key={index}>
+                            const formattedStartedAt = exec.startedAt && formatDistanceToNow(exec.startedAt, {
+                                addSuffix: true
+                            })
+                            return <TableRow key={index} className='cursor-pointer'
+                                onClick={() => {
+                                    router.push(`/workflow/run/${exec.workflowId}/${exec.id}`)
+                                }}
+                            >
                                 <TableCell>
                                     <div className='flex flex-col'>
                                         <span className='font-semibold'>{exec.id}</span>
@@ -62,12 +74,27 @@ export default function ExecutionsTable({
                                     </div>
                                 </TableCell>
                                 <TableCell>
-                                    <div>
-                                        <div>
-                                            {exec.status}
+                                    <div className='flex flex-col'>
+                                        <div className='flex items-center gap-2'>
+                                            <ExecutionStatusIndicator status={exec.status as WorkflowExecutionStatus} />
+                                            <span className='font-semibold capitalize'>{exec.status}</span>
                                         </div>
-                                        <div>{duration}</div>
+                                        <div className='text-muted-foreground text-xs mx-5'>{duration}</div>
                                     </div>
+                                </TableCell>
+
+                                <TableCell>
+                                    <div className='flex flex-col'>
+                                        <div className='flex items-center gap-2'>
+                                            <CoinsIcon size={16} className='text-primary' />
+                                            <span className='font-semibold capitalize'>{exec.creditsConsumed}</span>
+                                        </div>
+                                        <div className='text-muted-foreground text-xs mx-5'>Credits</div>
+                                    </div>
+                                </TableCell>
+
+                                <TableCell className='text-right text-muted-foreground'>
+                                    {formattedStartedAt}
                                 </TableCell>
                             </TableRow>
                         })

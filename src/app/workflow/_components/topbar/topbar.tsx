@@ -8,15 +8,18 @@ import React from 'react'
 import SaveButton from './saveButton'
 import ExecuteButton from './ExecuteButton'
 import NavigationTab from './navigationTab'
+import PublishButton from './publishButton'
+import UnPublishButton from './unPublishButton'
 
 type Props = {
     title: string,
     subtitle?: string,
     workflowId: string,
-    hideButtons?: boolean
+    hideButtons?: boolean,
+    isPublished?: boolean
 }
 
-export default function Topbar({ title, subtitle, workflowId, hideButtons = false }: Props) {
+export default function Topbar({ title, subtitle, workflowId, hideButtons = false, isPublished = false }: Props) {
 
     const router = useRouter();
 
@@ -41,12 +44,22 @@ export default function Topbar({ title, subtitle, workflowId, hideButtons = fals
                     }
                 </div>
             </div>
-            <NavigationTab workflowId={workflowId}/>
+            <NavigationTab workflowId={workflowId} />
             <div className='flex gap-1 flex-1 justify-end items-center'>
                 {!hideButtons &&
                     <>
                         <ExecuteButton workflowId={workflowId} />
-                        <SaveButton workflowId={workflowId} />
+                        {
+                            isPublished && <>
+                                <UnPublishButton workflowId={workflowId} />
+                            </>
+                        }
+                        {
+                            !isPublished && <>
+                                <SaveButton workflowId={workflowId} />
+                                <PublishButton workflowId={workflowId} />
+                            </>
+                        }
                     </>
                 }
             </div>
