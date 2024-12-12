@@ -40,10 +40,6 @@ export default function DeleteWorkFlow({ open, setOpen, workflowName, workflowId
             toast.error("Some error occured while deleting the workflow", { id: workflowId })
         }
     })
-
-
-
-
     return (
         <AlertDialog open={open} onOpenChange={setOpen}>
             <AlertDialogContent>

@@ -8,13 +8,9 @@ import { revalidatePath } from "next/cache";
 
 export async function UpdateWorkFlow({ id, definition }: { id: string, definition: string }) {
     const { userId } = auth();
-
-
     if (!userId) {
         throw new Error("Unauthenticated.")
     }
-
-
     const workflow = await prisma.workflow.findUnique({
         where: {
             id, userId

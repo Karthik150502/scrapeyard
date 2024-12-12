@@ -13,7 +13,15 @@ import { Button } from '@/components/ui/button'
 export default function TaskMenu() {
     return (
         <aside className='w-[340px] min-w-[340px] max-w-[340px] border-r border-separate h-full p-2 px-4 overflow-auto'>
-            <Accordion type="multiple" className='w-full' defaultValue={["extraction"]}>
+            <Accordion type="multiple" className='w-full' defaultValue={["extraction", "interaction"]}>
+                <AccordionItem value='interaction'>
+                    <AccordionTrigger className='font- text-xs hover:no-underline'>
+                        User Interactions
+                    </AccordionTrigger>
+                    <AccordionContent className='flex flex-col gap-1'>
+                        <TaskMenuBtn taskType={TaskType.FILL_INPUT} />
+                    </AccordionContent>
+                </AccordionItem>
                 <AccordionItem value='extraction'>
                     <AccordionTrigger className='font- text-xs hover:no-underline'>
                         Data Extraction
@@ -23,6 +31,8 @@ export default function TaskMenu() {
                         <TaskMenuBtn taskType={TaskType.EXTRACT_TEXT_FROM_ELEMENT} />
                     </AccordionContent>
                 </AccordionItem>
+
+
             </Accordion>
         </aside>
     )

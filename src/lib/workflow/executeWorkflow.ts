@@ -14,7 +14,7 @@ import { Edge } from "@xyflow/react";
 import { LogCollector } from "@/types/log";
 import { createLogCollector } from "../log";
 
-export async function executeWorkflow(executionId: string) {
+export async function executeWorkflow(executionId: string, nextRunAt?: Date) {
     const execution = await prisma.workFlowExecution.findUnique({
         where: {
             id: executionId
@@ -37,13 +37,9 @@ export async function executeWorkflow(executionId: string) {
 
 
     // TODO: initialize the workflow execution.
-    await initializeWorkflowExecution(executionId, execution.workflowId);
-
+    await initializeWorkflowExecution(executionId, execution.workflowId, nextRunAt);
     // TODO: Initialize the phases status
     await intializePhaseStatuses(execution);
-
-
-
     let executionFailed = false;
     let creditsConsumed = 0;
     for (const phase of execution.phases) {
@@ -71,7 +67,7 @@ export async function executeWorkflow(executionId: string) {
 }
 
 
-async function initializeWorkflowExecution(executionId: string, workflowId: string) {
+async function initializeWorkflowExecution(executionId: string, workflowId: string, nextRunAt?: Date) {
     await prisma.workFlowExecution.update({
         where: {
             id: executionId
@@ -89,7 +85,8 @@ async function initializeWorkflowExecution(executionId: string, workflowId: stri
         data: {
             lastRunAt: new Date(),
             lastRunStatus: WorkflowExecutionStatus.RUNNING,
-            lastRunId: executionId
+            lastRunId: executionId,
+            ...(nextRunAt && { nextRunAt })
         }
     })
 }
@@ -222,6 +219,7 @@ async function executePhase(phase: ExecutionPhase, node: AppNode, environment: E
 
     const runFn = ExecutorRegistry[node.data.type];
     if (!runFn) {
+        logCollector.error(`Not found executor for ${node.data.type}`)
         return false;
     }
 
