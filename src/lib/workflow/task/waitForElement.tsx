@@ -1,15 +1,15 @@
 import { TaskParamType, TaskType } from '@/types/task'
-import { WorkFlowTaskType } from '@/types/workflow';
-import { Edit3Icon, LucideProps } from 'lucide-react'
+import { WorkFlowTaskType } from '@/types/workflow'
+import { EyeIcon, LucideProps } from 'lucide-react'
 import React from 'react'
 
 
-export const FillInputTask = {
-    type: TaskType.FILL_INPUT,
+export const waitForElementTask = {
+    type: TaskType.WAIT_FOR_ELEMENT,
     credits: 1,
-    label: "Fill Input",
+    label: "Wait for Element",
     isEntryPoint: false,
-    icon: (props: LucideProps) => <Edit3Icon className='stroke-teal-400' {...props} />,
+    icon: (props: LucideProps) => <EyeIcon className='stroke-amber-400' {...props} />,
     inputs: [
         {
             name: "Web Page",
@@ -22,10 +22,15 @@ export const FillInputTask = {
             required: true,
         },
         {
-            name: "Value",
-            type: TaskParamType.STRING,
+            name: "Visibility",
+            type: TaskParamType.SELECT,
             required: true,
-        }
+            hideHandle: true,
+            options: [
+                { label: "Visible", value: "visible" },
+                { label: "Hidden", value: "hidden" }
+            ]
+        },
     ] as const,
     outputs: [
         {

@@ -18,12 +18,12 @@ export default function BreadcrumbHeader() {
                 <BreadcrumbList>
                     {
                         paths.map((p, i) => <React.Fragment key={i}>
-                            {i > 0 && <p>/</p>}
                             <BreadcrumbItem>
                                 <BreadcrumbLink className='capitalize' href={`/${p}`}>
                                     {p === "" ? "home" : p}
                                 </BreadcrumbLink>
                             </BreadcrumbItem>
+                            {(i < paths.length - 1) && <BreadcrumbSeparator />}
                         </React.Fragment>)
                     }
                 </BreadcrumbList>

@@ -1,15 +1,14 @@
 import { TaskParamType, TaskType } from '@/types/task'
-import { WorkFlowTaskType } from '@/types/workflow';
-import { Edit3Icon, LucideProps } from 'lucide-react'
+import { WorkFlowTaskType } from '@/types/workflow'
+import { Link2Icon, LucideProps } from 'lucide-react'
 import React from 'react'
 
-
-export const FillInputTask = {
-    type: TaskType.FILL_INPUT,
-    credits: 1,
-    label: "Fill Input",
+export const navigateUrlTask = {
+    type: TaskType.NAVIGATE_URL,
+    credits: 2,
     isEntryPoint: false,
-    icon: (props: LucideProps) => <Edit3Icon className='stroke-teal-400' {...props} />,
+    label: "Navigate Url Element",
+    icon: (props: LucideProps) => <Link2Icon className='stroke-teal-400' {...props} />,
     inputs: [
         {
             name: "Web Page",
@@ -17,15 +16,10 @@ export const FillInputTask = {
             required: true,
         },
         {
-            name: "Selector",
+            name: "URL",
             type: TaskParamType.STRING,
             required: true,
         },
-        {
-            name: "Value",
-            type: TaskParamType.STRING,
-            required: true,
-        }
     ] as const,
     outputs: [
         {

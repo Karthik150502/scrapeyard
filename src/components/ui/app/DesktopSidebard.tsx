@@ -21,7 +21,7 @@ export default function DesktopSidebard() {
             </div>
             <div className='p-2'><UserAvailableCredits /></div>
             <div className='flex flex-col p-2 gap-y-2'>
-                {   
+                {
                     dashboardRoutes.map((r) => <Link href={r.path} key={r.path} className={cn("flex items-center justify-start gap-x-2 !rounded-md", buttonVariants({ variant: activeRoute.path == r.path ? "sidebarActiveItem" : "sidebarItem" }))}
 
                     >

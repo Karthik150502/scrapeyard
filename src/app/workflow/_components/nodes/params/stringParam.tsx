@@ -4,6 +4,7 @@ import { Input } from '@/components/ui/input'
 import React, { useEffect, useId, useState } from 'react'
 import { ParamProps } from '@/types/appNode'
 import { Textarea } from '@/components/ui/textarea'
+import { cn } from '@/lib/utils'
 
 
 
@@ -35,7 +36,7 @@ export default function StringParam({ param, value, updateNodeParamValue, disabl
                 disabled={disabled}
                 id={id}
                 value={internalValue}
-                className='text-xs'
+                className={cn("text-xs", param.variant === "textarea" && "min-h-[80px] max-h-[250px] h-[150px]")}
                 placeholder='Enter value here'
                 onChange={(e: any) => { setInternalValue(e.target.value) }}
                 onBlur={(e: any) => updateNodeParamValue(e.target.value)}

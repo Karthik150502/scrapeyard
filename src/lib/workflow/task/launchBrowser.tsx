@@ -1,6 +1,6 @@
 import { TaskParamType, TaskType } from '@/types/task'
 import { WorkFlowTaskType } from '@/types/workflow';
-import { GlobeIcon, LucideProps } from 'lucide-react'
+import { LucideProps, GlobeIcon } from 'lucide-react'
 import React from 'react'
 
 

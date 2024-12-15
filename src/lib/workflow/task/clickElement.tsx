@@ -1,15 +1,14 @@
 import { TaskParamType, TaskType } from '@/types/task'
-import { WorkFlowTaskType } from '@/types/workflow';
-import { Edit3Icon, LucideProps } from 'lucide-react'
+import { WorkFlowTaskType } from '@/types/workflow'
+import { LucideProps, MousePointer } from 'lucide-react'
 import React from 'react'
 
-
-export const FillInputTask = {
-    type: TaskType.FILL_INPUT,
+export const clickElementTask = {
+    type: TaskType.CLICK_ELEMENT,
     credits: 1,
-    label: "Fill Input",
     isEntryPoint: false,
-    icon: (props: LucideProps) => <Edit3Icon className='stroke-teal-400' {...props} />,
+    label: "Click Element",
+    icon: (props: LucideProps) => <MousePointer className='stroke-teal-400' {...props} />,
     inputs: [
         {
             name: "Web Page",
@@ -21,11 +20,6 @@ export const FillInputTask = {
             type: TaskParamType.STRING,
             required: true,
         },
-        {
-            name: "Value",
-            type: TaskParamType.STRING,
-            required: true,
-        }
     ] as const,
     outputs: [
         {
