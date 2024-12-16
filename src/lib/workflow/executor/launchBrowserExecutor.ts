@@ -11,7 +11,7 @@ export async function launchBrowserExecutor(
         const websiteUrl = environment.getInput("Website URL");
         console.log("@@website url = ", websiteUrl)
         const browser = await puppeteer.launch({
-            headless: false, //It "opens up" a chromium browser for us instantly. 
+            headless: true, //It "opens up" a chromium browser for us instantly. 
             //args: ["--proxy-server=brd.superproxy.io:33335"], //TLDR: To rotate IPs on each scrape session to aviod bot detection.
         })
         environment.setBrowser(browser);

@@ -7,7 +7,7 @@ export const navigateUrlTask = {
     type: TaskType.NAVIGATE_URL,
     credits: 2,
     isEntryPoint: false,
-    label: "Navigate Url Element",
+    label: "Navigate Url",
     icon: (props: LucideProps) => <Link2Icon className='stroke-teal-400' {...props} />,
     inputs: [
         {

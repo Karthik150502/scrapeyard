@@ -5,7 +5,7 @@ import { CoinsIcon, HomeIcon, Layers2Icon, ShieldCheckIcon } from "lucide-react"
 
 export const dashboardRoutes = [
     {
-        path: '',
+        path: 'home',
         label: "Home",
         icon: HomeIcon
     },

@@ -7,7 +7,7 @@ import React from 'react'
 export const waitForElementTask = {
     type: TaskType.WAIT_FOR_ELEMENT,
     credits: 1,
-    label: "Wait for Element",
+    label: "Wait for",
     isEntryPoint: false,
     icon: (props: LucideProps) => <EyeIcon className='stroke-amber-400' {...props} />,
     inputs: [

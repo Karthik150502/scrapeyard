@@ -5,6 +5,7 @@ import AppProviders from "../providers";
 import { ClerkProvider } from "@clerk/nextjs";
 import { montserrat400 } from "../fonts/montserrat";
 import { Toaster } from "@/components/ui/sonner";
+import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "ScrapeYard",
@@ -28,7 +29,7 @@ export default function RootLayout({
       }}
     >
       <html lang="en">
-        <body className={montserrat400.className}>
+        <body className={cn(montserrat400.className)}>
           <AppProviders>
             {children}
             <Toaster richColors />
