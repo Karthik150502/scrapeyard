@@ -84,6 +84,8 @@ model UserBalance {
   credits Int    @default(0)
 }
 
+
+
 model Credential {
   id        String   @id @default(cuid())
   userId    String

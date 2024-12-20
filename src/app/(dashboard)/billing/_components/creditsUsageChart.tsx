@@ -9,7 +9,6 @@ import {
     CardDescription
 } from "@/components/ui/card";
 import {
-    ChartConfig,
     ChartContainer,
     ChartLegend,
     ChartLegendContent,
@@ -31,7 +30,7 @@ const CHART_CONFIG = {
     }
 }
 
-export default function ExecutionStatusChart({ data }: {
+export default function CreditsUsageChart({ data }: {
     data: ChartData
 }) {
     return (
@@ -39,10 +38,10 @@ export default function ExecutionStatusChart({ data }: {
             <CardHeader>
                 <CardTitle className="text-2xl font-bold flex items-center gap-2">
                     <Layers2 className="w-6 h-6 text-primary" />
-                    Workflow execution status
+                    Credits Usage Chart
                 </CardTitle>
                 <CardDescription>
-                    Daily number of successfull and failed executions
+                    Daily number of successfull and failed Credits Usage
                 </CardDescription>
             </CardHeader>
             <CardContent>

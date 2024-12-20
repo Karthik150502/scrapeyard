@@ -13,7 +13,7 @@ export default function StatsCard(props: Props) {
     return (
         <Card className="relative overflow-hidden h-full">
             <CardHeader className='flex'>
-                <CardTitle>
+                <CardTitle className='text-lg'>
                     {props.title}
                 </CardTitle>
                 <props.icon

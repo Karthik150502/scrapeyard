@@ -6,6 +6,8 @@ import { StatsCardsSkeleton } from './_components/statsCardSkeleton';
 import { StatsCards } from './_components/statCards';
 import { getWorlflowEcxecutionStats } from '@/actions/analytics/getWorlflowEcxecutionStats';
 import ExecutionStatusChart from './_components/executionStatusChart';
+import { getCreditsUsageInPeriod } from '@/actions/analytics/getCreditsUsageInPeriod';
+import CreditsUsageChart from './_components/creditsUsageChart';
 export default function DashboardHome({ searchParams }: {
     searchParams: {
         month?: string,
@@ -36,6 +38,9 @@ export default function DashboardHome({ searchParams }: {
                 <Suspense fallback={<Skeleton className='w-full h-[300px]' />}>
                     <StatsExecutionStatus selectedPeriod={period} />
                 </Suspense>
+                <Suspense fallback={<Skeleton className='w-full h-[300px]' />}>
+                    <CreditsUsageInPeriod selectedPeriod={period} />
+                </Suspense>
             </div>
         </div>
     )
@@ -51,4 +56,16 @@ async function StatsExecutionStatus({
 
     const data = await getWorlflowEcxecutionStats(selectedPeriod);
     return <ExecutionStatusChart data={data} />
+}
+async function CreditsUsageInPeriod({
+    selectedPeriod
+}: {
+    selectedPeriod: Period
+}) {
+
+    const data = await getCreditsUsageInPeriod(selectedPeriod);
+    return <CreditsUsageChart
+        data={data}
+        title="Daily Credits usage"
+        description="Daily credits consumed in selected period" />
 }
